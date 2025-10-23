@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import instance from '../api/axios';
 import { type Movie } from '../types';
 import './Row.css';
@@ -15,15 +15,15 @@ const BASE_URL = 'https://image.tmdb.org/t/p/original';
 export default function Row({ title, fetchUrl, id, isLargeRow }: Props) {
   const [movies, setMovies] = useState<Movie[]>([]);
 
-  useEffect(() => {
-    fetchMovieData();
-  }, [fetchUrl]);
-
-  const fetchMovieData = async () => {
+  const fetchMovieData = useCallback(async () => {
     const request = await instance.get(fetchUrl);
     setMovies(request.data.results);
     return request;
-  };
+  }, [fetchUrl]);
+
+  useEffect(() => {
+    fetchMovieData();
+  }, [fetchMovieData]);
 
   return (
     <section className="row">
