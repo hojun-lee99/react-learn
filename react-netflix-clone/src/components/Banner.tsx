@@ -3,21 +3,7 @@ import requests from '../api/requests';
 import instance from '../api/axios';
 import './Banner.css';
 import styled from 'styled-components';
-
-interface Movie {
-  id: number;
-  title?: string;
-  name?: string;
-  original_name?: string;
-  backdrop_path?: string;
-  overview?: string;
-  videos?: {
-    results: {
-      key: string;
-      type: string;
-    }[];
-  };
-}
+import { type Movie } from '../types';
 
 function truncate(str: string | undefined, n: number) {
   if (!str) {
@@ -48,12 +34,17 @@ export default function Banner() {
     setMovie(movieDetail);
   }
 
+  const backgroundImageUrl = movie?.backdrop_path
+    ? `url("https://image.tmdb.org/t/p/original/${movie.backdrop_path}`
+    : undefined;
+
   if (!isClicked) {
     return (
       <header
         className="banner"
         style={{
-          backgroundImage: `url("https://image.tmdb.org/t/p/original/${movie?.backdrop_path}")`,
+          backgroundImage: backgroundImageUrl,
+          backgroundColor: backgroundImageUrl ? 'transparent' : '#111',
           backgroundPosition: 'top center',
           backgroundSize: 'cover',
         }}
