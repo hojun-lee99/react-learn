@@ -30,7 +30,15 @@ export default function Row({ title, fetchUrl, id, isLargeRow }: Props) {
       {/** TITLE */}
       <h2>{title}</h2>
       <div className="slider">
-        <div className="slider_arrow-left">
+        <div
+          className="slider_arrow-left"
+          onClick={() => {
+            const element = document.getElementById(id);
+            if (element) {
+              element.scrollLeft -= window.innerWidth - 80;
+            }
+          }}
+        >
           <span className="arrow">{'<'}</span>
         </div>
         <div id={id} className="row_posters">
@@ -47,7 +55,15 @@ export default function Row({ title, fetchUrl, id, isLargeRow }: Props) {
             />
           ))}
         </div>
-        <div className="slider_arrow-right">
+        <div
+          className="slider_arrow-right"
+          onClick={() => {
+            const element = document.getElementById(id);
+            if (element) {
+              element.scrollLeft += window.innerWidth - 80;
+            }
+          }}
+        >
           <span className="arrow">{'>'}</span>
         </div>
       </div>
