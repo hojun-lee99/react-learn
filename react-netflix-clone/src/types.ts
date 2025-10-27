@@ -13,4 +13,7 @@ export interface Movie {
       type: string;
     }[];
   };
+  release_date?: string;
+  first_air_date?: string;
+  vote_average?: number;
 }

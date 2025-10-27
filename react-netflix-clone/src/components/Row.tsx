@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import instance from '../api/axios';
 import { type Movie } from '../types';
 import './Row.css';
+import MovieModal from './MovieModal';
 
 interface Props {
   title: string;
@@ -14,6 +15,13 @@ const BASE_URL = 'https://image.tmdb.org/t/p/original';
 
 export default function Row({ title, fetchUrl, id, isLargeRow }: Props) {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [movieSelected, setMovieSelected] = useState<Movie | null>(null);
+
+  const handleClick = (movie: Movie) => {
+    setModalOpen(true);
+    setMovieSelected(movie);
+  };
 
   const fetchMovieData = useCallback(async () => {
     const request = await instance.get(fetchUrl);
@@ -46,6 +54,7 @@ export default function Row({ title, fetchUrl, id, isLargeRow }: Props) {
           {movies.map((movie) => (
             <img
               key={movie.id}
+              onClick={() => handleClick(movie)}
               className={`row_poster ${isLargeRow && 'row_posterLarge'}`}
               src={`${BASE_URL}${
                 isLargeRow ? movie.poster_path : movie.backdrop_path
@@ -67,6 +76,9 @@ export default function Row({ title, fetchUrl, id, isLargeRow }: Props) {
           <span className="arrow">{'>'}</span>
         </div>
       </div>
+      {modalOpen && movieSelected && (
+        <MovieModal {...movieSelected} setModalOpen={setModalOpen} />
+      )}
     </section>
   );
 }
