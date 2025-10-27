@@ -1,5 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react';
 import type { Movie } from '../types';
+import './MovieModal.css';
 
 interface Props extends Movie {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
