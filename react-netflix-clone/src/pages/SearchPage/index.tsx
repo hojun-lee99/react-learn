@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import instance from '../../api/axios';
 import type { Movie } from '../../types';
 import './SearchPage.css';
+import { useDebounce } from '../../hooks/useDebounce';
 
 export default function SearchPage() {
   const useQuery = () => {
@@ -10,20 +11,22 @@ export default function SearchPage() {
   };
 
   const qeury = useQuery();
-  const searchTerm = qeury.get('q');
+  // const searchTerm = qeury.get('q');
+  const debouncedSearchTerm = useDebounce(qeury.get('q'), 500);
+  const navigate = useNavigate();
 
   const [searchResults, setSearchResults] = useState<Movie[]>([]);
 
   useEffect(() => {
-    if (searchTerm) {
-      fetchSearchMovie(searchTerm);
+    if (debouncedSearchTerm) {
+      fetchSearchMovie(debouncedSearchTerm);
     }
-  }, [searchTerm]);
+  }, [debouncedSearchTerm]);
 
-  const fetchSearchMovie = async (searchTerm: string) => {
+  const fetchSearchMovie = async (debouncedSearchTerm: string) => {
     try {
       const request = await instance.get(
-        `/search/multi?include_adult=false&query=${searchTerm}`,
+        `/search/multi?include_adult=false&query=${debouncedSearchTerm}`,
       );
       setSearchResults(request.data.results);
     } catch (error) {
@@ -40,7 +43,10 @@ export default function SearchPage() {
               'https://image.tmdb.org/t/p/w500' + movie.backdrop_path;
             return (
               <div className="movie">
-                <div className="movie_column-poster">
+                <div
+                  className="movie_column-poster"
+                  onClick={() => navigate(`/${movie.id}`)}
+                >
                   <img src={movieImageUrl} alt="" className="movie_poster" />
                 </div>
               </div>
@@ -51,7 +57,9 @@ export default function SearchPage() {
     ) : (
       <section className="no-results">
         <div className="no-results_text">
-          <p>Your search for "{searchTerm}" did not have any matches.</p>
+          <p>
+            Your search for "{debouncedSearchTerm}" did not have any matches.
+          </p>
           <p>Suggestions:</p>
           <ul>
             <li>Try different keywords</li>
